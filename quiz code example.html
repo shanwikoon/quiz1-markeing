@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segmentation Process at Finch & Olive</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        .question-container {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .options button.correct {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .options button.incorrect {
+            background-color: #f44336;
+            color: white;
+        }
+        .feedback {
+            margin-top: 10px;
+        }
+        .score {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 24px;
+        }
+        .endgame {
+            text-align: center;
+            margin-top: 20px;
+        }
+        @media (max-width: 600px) {
+            .question-container {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Segmentation Process at Finch & Olive Quiz</h1>
+    <p style="text-align: center;">Select the correct answer for each question. Good luck!</p>
+
+    <div id="quiz"></div>
+    <div class="score" id="score"></div>
+    <div class="endgame" id="endgame"></div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is the first step in the segmentation process for Finch & Olive?",
+                options: ["Identify the key variable", "Start with a situation analysis", "Develop each segment’s profile", "Create new menu options"],
+                correct: 1,
+                feedback: "The first step was conducting a situation analysis."
+            },
+            {
+                question: "In Finch & Olive’s situation analysis, what did the team examine?",
+                options: ["The type of dishes on the menu", "The competition’s pricing strategies", "Customer traffic patterns and dining behaviours", "Social media engagement"],
+                correct: 2,
+                feedback: "They analyzed customer traffic patterns and dining behaviors."
+            },
+            {
+                question: "After the situation analysis, what is the next step in the segmentation process?",
+                options: ["Develop segment profiles", "Set marketing objectives", "Identify the key variables", "Conduct focus groups"],
+                correct: 2,
+                feedback: "Identifying key variables is the next step after the situation analysis."
+            },
+            {
+                question: "Which key variable did Finch & Olive use to segment their consumer audience?",
+                options: ["Geographic location", "Demographics and behavioural preferences", "Menu prices", "Customer loyalty"],
+                correct: 1,
+                feedback: "They used demographics and behavioral preferences for segmentation."
+            },
+            {
+                question: "How did Finch & Olive identify their business audience segmentation?",
+                options: ["They focused on company size and industry sector", "They looked at how often companies visited", "They used geographic data alone", "They segmented based on age groups"],
+                correct: 0,
+                feedback: "They focused on company size and industry sector for business segmentation."
+            },
+            {
+                question: "What did Finch & Olive do after identifying key variables for each audience?",
+                options: ["Launch a marketing campaign", "Develop detailed profiles for each segment", "Remove underperforming menu items", "Hire new chefs"],
+                correct: 1,
+                feedback: "They developed detailed profiles after identifying key variables."
+            },
+            {
+                question: "What was included in the segment profile for Finch & Olive’s young professional audience?",
+                options: ["They prefer long, leisurely meals", "They prefer quick, healthy lunch options", "They dine in groups of four or more", "They avoid using technology to order food"],
+                correct: 1,
+                feedback: "The young professionals preferred quick, healthy lunch options."
+            },
+            {
+                question: "How did Finch & Olive segment the business audience from the tech and creative sectors?",
+                options: ["They offered a quiet, formal dining experience", "They focused on providing exclusive corporate menus", "They offered casual, flexible platters for sharing", "They removed lunch options entirely"],
+                correct: 2,
+                feedback: "They offered casual, flexible platters for the tech and creative audience."
+            },
+            {
+                question: "What step in the segmentation process helps ensure effective targeting and avoids common mistakes?",
+                options: ["Over-segmentation of the audience", "Criteria for effective segmentation", "Ignoring customer data", "Focusing solely on one audience segment"],
+                correct: 1,
+                feedback: "Setting criteria for effective segmentation is essential for targeting."
+            },
+            {
+                question: "What key mistake did Finch & Olive aim to avoid during their segmentation process?",
+                options: ["Creating only one segment", "Ignoring the competition", "Over-segmenting their audience into too many small groups", "Focusing too much on their B2B audience"],
+                correct: 2,
+                feedback: "They wanted to avoid over-segmenting their audience into too many groups."
+            }
+        ];
+
+        let score = 0;
+        let questionIndex = 0;
+
+        function loadQuiz() {
+            const quizContainer = document.getElementById('quiz');
+            quizContainer.innerHTML = '';
+
+            quizData.forEach((item, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.classList.add('question-container');
+                
+                const questionTitle = document.createElement('h3');
+                questionTitle.textContent = (index + 1) + '. ' + item.question;
+                questionElement.appendChild(questionTitle);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                item.options.forEach((option, optIndex) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.addEventListener('click', () => handleAnswer(optIndex, item.correct, index, button));
+                    optionsDiv.appendChild(button);
+                });
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                feedbackDiv.setAttribute('id', 'feedback-' + index);
+                questionElement.appendChild(optionsDiv);
+                questionElement.appendChild(feedbackDiv);
+
+                quizContainer.appendChild(questionElement);
+            });
+
+            updateScore();
+        }
+
+        function handleAnswer(selected, correct, questionIndex, button) {
+            const feedbackDiv = document.getElementById('feedback-' + questionIndex);
+            const buttons = feedbackDiv.previousElementSibling.querySelectorAll('button');
+
+            buttons.forEach(btn => btn.disabled = true); // Disable all buttons after an answer is selected
+
+            if (selected === correct) {
+                button.classList.add('correct');
+                score += 10;
+                feedbackDiv.textContent = 'Correct!';
+            } else {
+                button.classList.add('incorrect');
+                buttons[correct].classList.add('correct');
+                feedbackDiv.textContent = quizData[questionIndex].feedback;
+            }
+
+            updateScore();
+            checkEndgame();
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = 'Score: ' + score + '/100';
+        }
+
+        function checkEndgame() {
+            const answeredQuestions = document.querySelectorAll('.feedback:empty').length === 0;
+
+            if (answeredQuestions) {
+                const endgameDiv = document.getElementById('endgame');
+                let message = score >= 80 ? 'Well Done!' : 'Better Luck Next Time!';
+                endgameDiv.innerHTML = `<h2>${message}</h2><button onclick="restartQuiz()">Play Again</button>`;
+            }
+        }
+
+        function restartQuiz() {
+            score = 0;
+            quizData.sort(() => Math.random() - 0.5);  // Shuffle questions
+            loadQuiz();
+        }
+
+        window.onload = loadQuiz;
+    </script>
+</body>
+</html>
